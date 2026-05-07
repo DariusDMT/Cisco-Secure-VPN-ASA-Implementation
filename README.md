@@ -4,8 +4,9 @@ This repository contains a full-scale network implementation designed in Cisco P
 Network Architecture (Color-Coded Segments)
 
 <p align="center">
-  <img src="topology/image_e0f5d7.png" alt="Network Topology" width="800">
+  <img src="TOPOLOGY.png" width="850" alt="Network Topology Overview">
 </p>
+
 The topology is divided into three logical zones for clarity:
 
 ## 🟡 **Yellow Zone (LAN Infrastructure)**:
@@ -89,19 +90,36 @@ The following table centralizes all device configurations, including specific in
 The tunnel ensures data confidentiality between HQ and Branch.
 * **Phase 1 (ISAKMP):** AES-256 encryption, SHA hashing, DH Group 2.
 * **Phase 2 (IPsec):** ESP with AES encryption and SHA authentication.
+  <p align="center">
+  <img src="vpn_ipsec_sa_status.png" width="800" alt="VPN IPsec Status">
+</p>
 
 ### 2. Cisco ASA & NAT Traversal
 The **Cisco ASA Firewall** is positioned behind the Edge Router to filter internal traffic. A major technical challenge was **NAT Traversal**:
 * The ASA translates internal IPs to `200.0.0.1`.
 * The **HQ-EDGE** router was configured with specific Access Control Lists (ACLs) to recognize and encrypt this translated traffic.
+* <p align="center">
+  <img src="asa_interface_config.png" width="450" alt="ASA Interfaces">
+  <img src="hq_firewall_nat1.png" width="450" alt="ASA NAT Validation">
+</p>
 
 ### 3. High Availability (HSRP)
 To prevent network downtime, **HSRP** was implemented on the Core Switches.
 * **Active Gateway:** Core-1 (Priority 110).
 * **Standby Gateway:** Core-2 (Priority 100).
 * This ensures that if one switch fails, the Virtual IP (`10.0.x.1`) remains reachable, keeping users online.
+<p align="center">
+  <img src="hsrp_config.png" width="450" alt="HSRP Configuration">
+  <img src="hsrp_standby_validation.png" width="450" alt="HSRP Standby Status">
+  </p>
+  
+  ## ✅ Connectivity Proof
+End-to-end connectivity was verified via ICMP (Ping) from the Branch LAN to the HQ internal network. The reply confirms that **NAT Traversal** is successfully handling the traffic through the encrypted tunnel.
 
----
+<p align="center">
+  <img src="connectivity_test_ping.png" width="650" alt="Ping Validation">
+</p>
+
 
 ## 🛠️ Troubleshooting Log
 * **ISP Routing Issue:** Resolved by implementing static routes on the ISP router to allow reachability between the two public WAN subnets (`82.0.0.0` and `188.0.0.0`).
@@ -110,5 +128,4 @@ To prevent network downtime, **HSRP** was implemented on the Core Switches.
 
 ## 📂 Project Files
 * `/configs`: Contains `.txt` files with `show run` outputs for all major devices.
-* `/topology`: Contains high-resolution diagrams and color-coded segmentation maps.
 * `/lab`: The original `.pkt` (Cisco Packet Tracer) file for simulation.
