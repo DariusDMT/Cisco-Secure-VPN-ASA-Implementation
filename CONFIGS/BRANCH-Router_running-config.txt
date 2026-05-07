@@ -1,0 +1,111 @@
+!
+version 15.4
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname BRANCH
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+crypto isakmp policy 10
+ encr aes
+ authentication pre-share
+ group 2
+!
+crypto isakmp key SECRET_PASS_123 address 82.210.10.2
+!
+!
+!
+crypto ipsec transform-set SET-VPN esp-aes esp-sha-hmac
+!
+crypto map MAP-VPN 10 ipsec-isakmp 
+ set peer 82.210.10.2
+ set transform-set SET-VPN 
+ match address 110
+!
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0/0
+ ip address 188.5.5.2 255.255.255.252
+ ip nat outside
+ duplex auto
+ speed auto
+ crypto map MAP-VPN
+!
+interface GigabitEthernet0/0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0/1.100
+ encapsulation dot1Q 100
+ ip address 10.1.100.1 255.255.255.0
+ ip nat inside
+!
+interface GigabitEthernet0/0/1.101
+ encapsulation dot1Q 101
+ ip address 10.1.101.1 255.255.255.0
+!
+interface GigabitEthernet0/0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+ip nat inside source list NAT_ACL interface GigabitEthernet0/0/0 overload
+ip classless
+ip route 0.0.0.0 0.0.0.0 188.5.5.1 
+!
+ip flow-export version 9
+!
+!
+access-list 110 permit ip 10.1.0.0 0.0.255.255 10.0.0.0 0.0.255.255
+access-list 110 permit ip host 200.0.0.1 10.1.0.0 0.0.255.255
+access-list 110 permit ip 10.1.0.0 0.0.255.255 host 200.0.0.1
+ip access-list extended NAT_ACL
+ deny ip 10.1.0.0 0.0.255.255 10.0.0.0 0.0.255.255
+ permit ip 10.1.0.0 0.0.255.255 any
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
+
