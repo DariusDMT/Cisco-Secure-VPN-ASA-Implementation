@@ -127,5 +127,5 @@ End-to-end connectivity was verified via ICMP (Ping) from the Branch LAN to the 
 * **ACL Refinement:** Adjusted the VPN "interesting traffic" list to include the NAT-ed pool from the ASA Firewall.
 
 ## 📂 Project Files
-* `/configs`: Contains `.txt` files with `show run` outputs for all major devices.
-* `/lab`: The original `.pkt` (Cisco Packet Tracer) file for simulation.
+* `/CONFIGS`: Contains `.txt` files with `show run` outputs for all major devices.
+* `/PROJECT`: The original `.pkt` (Cisco Packet Tracer) file for simulation.
